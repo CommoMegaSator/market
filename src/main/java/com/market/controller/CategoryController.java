@@ -3,6 +3,8 @@ package com.market.controller;
 import com.market.dto.CategoryDto;
 import com.market.entity.Category;
 import com.market.mapper.CategoryMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,13 +22,15 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/categories")
+@RequestMapping("/api/v1/categories")
+@Tag(name = "Category")
 public class CategoryController {
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
 
     @PostMapping
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create category", description = "Creates new category")
     public CategoryDto createCategory(@RequestBody CategoryDto dto) {
         Category category = categoryMapper.toEntity(dto);
         if (dto.getParentId() != null) {
@@ -38,11 +42,13 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get category", description = "Returns category by Id")
     public CategoryDto getCategory(@PathVariable Long id) {
         return categoryMapper.toDto(categoryService.getCategoryById(id));
     }
 
-    @GetMapping
+    @GetMapping("/all")
+    @Operation(summary = "All categories", description = "Returns all categories")
     public List<CategoryDto> getAllCategories() {
         return categoryService.getAllCategories().stream()
                 .map(categoryMapper::toDto)
@@ -51,6 +57,7 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update category", description = "Updates existing category")
     public CategoryDto updateCategory(@PathVariable Long id, @RequestBody CategoryDto dto) {
         Category updated = categoryMapper.toEntity(dto);
         if (dto.getParentId() != null) {
@@ -62,6 +69,7 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Delete category", description = "Deletes category by Id")
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
     }

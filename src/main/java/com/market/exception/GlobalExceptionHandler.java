@@ -3,6 +3,7 @@ package com.market.exception;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.market.dto.ExceptionResponseData;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.firewall.RequestRejectedException;
@@ -104,10 +104,10 @@ public class GlobalExceptionHandler {
         return ExceptionResponseData.builder().errorCode("forbidden").errorMessage(exception.getMessage()).build();
     }
 
-    @ExceptionHandler(AccountStatusException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(EntityExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ExceptionResponseData handleAuthenticationException(Exception exception) {
-        return ExceptionResponseData.builder().errorCode("unauthorized").errorMessage(exception.getMessage()).build();
+        return ExceptionResponseData.builder().errorCode("userExists").errorMessage(exception.getMessage()).build();
     }
 
     @ExceptionHandler(value = {ServiceException.class})
