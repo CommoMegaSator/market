@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  database:
+    image: postgres:17
+    container_name: market-postgres
+    environment:
+      POSTGRES_DB: market
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose:
+      - 5432
+    networks:
+      - backend
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  application:
+    build:
+      context: ./
+      dockerfile: src/docker/Dockerfile
+    container_name: market
+    depends_on:
+      - database
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/market
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    restart: on-failure
+    networks:
+      - backend
+    expose:
+      - 8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:
+
+networks:
+  backend:

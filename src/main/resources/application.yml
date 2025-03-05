@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/market
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8080
+
+fixer:
+  url: https://api.apilayer.com/fixer/latest
+  apiKey: fb2c5bf391a6b9b2f93732cb7f309555
+
+application:
+  security:
+    jwt:
+      secret-key: 566B5970337336763979244226452948404D6351655468576D5A713474377721154
+      access-token:
+        expiration: 86400 # day
+      refresh-token:
+        expiration: 604800 # week
+      extended-expiration: 2629746 # month
+      cookie:
+        expiration: 86400 # day
+
+    encrypt-data:
+      algorithm: AES/ECB/PKCS5Padding
+      secret-key: 770A8A65DA156D24EE8A093277530142213
