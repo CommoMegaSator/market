@@ -11,4 +11,4 @@ COPY src ./src
 RUN mvn -f pom.xml clean install
 RUN ls /target
 
-ENTRYPOINT ["java", "-jar", "/target/market.jar"]
+ENTRYPOINT ["java", "-jar", "/target/task.jar"]

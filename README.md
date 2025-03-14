@@ -5,7 +5,7 @@ To start developing you can use docker or next technologies:
 * PostgreSQL
 
 After downloading:
-* Create database `market` in PostgreSQL.
+* Create database `task` in PostgreSQL.
 
 To start via docker use `docker-compose up`.
 <hr>

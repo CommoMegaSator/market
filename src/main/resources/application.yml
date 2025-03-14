@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/market
+    url: jdbc:postgresql://localhost:5432/task
     username: postgres
     password: postgres
   jpa:
@@ -14,9 +14,6 @@ spring:
 
 server:
   port: 8080
-
-fixer:
-  apiKey: fb2c5bf391a6b9b2f93732cb7f309555
 
 application:
   security:
@@ -36,3 +33,6 @@ logging:
     org:
       springframework:
         security: DEBUG
+
+storage:
+  url: http://localhost:9000

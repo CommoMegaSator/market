@@ -6,20 +6,25 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS category (
+CREATE TABLE IF NOT EXISTS document (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    parent_id INT,
-    CONSTRAINT fk_category_parent
-        FOREIGN KEY (parent_id) REFERENCES category (id)
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    owner VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT now(),
+    version INT NOT NULL,
+    status VARCHAR(20) CHECK (status IN ('ACTIVE', 'INACTIVE'))
 );
 
-CREATE TABLE IF NOT EXISTS product (
+CREATE TABLE IF NOT EXISTS document_attributes (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    price NUMERIC(10,2) NOT NULL,
-    currency VARCHAR(3) NOT NULL,
-    category_id INT,
-    CONSTRAINT fk_product_category
-        FOREIGN KEY (category_id) REFERENCES category (id)
+    document_id SERIAL REFERENCES document(id) ON DELETE CASCADE,
+    attribute_key VARCHAR(255) NOT NULL,
+    attribute_value TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS document_owners (
+    document_id INT REFERENCES document(id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (document_id, user_id)
 );

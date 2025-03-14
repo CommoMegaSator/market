@@ -2,9 +2,9 @@ version: '3.8'
 services:
   database:
     image: postgres:17
-    container_name: market-postgres
+    container_name: task-postgres
     environment:
-      POSTGRES_DB: market
+      POSTGRES_DB: task
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     restart: on-failure
@@ -26,11 +26,11 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    container_name: market
+    container_name: task
     depends_on:
       - database
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/market
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/task
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
@@ -41,8 +41,29 @@ services:
     ports:
       - "8080:8080"
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"  # MinIO API
+      - "9001:9001"  # MinIO Console (web UI)
+    environment:
+      MINIO_ROOT_USER: adminio
+      MINIO_ROOT_PASSWORD: ZvR2QeNczGlsjfza
+    volumes:
+      - minio_data:/data
+      - minio_config:/root/.minio
+    command: server /data --console-address ":9001"
+    networks:
+      - backend
+    expose:
+      - 9000
+      - 9001
+
 volumes:
   db_data:
+  minio_data:
+  minio_config:
 
 networks:
   backend:
