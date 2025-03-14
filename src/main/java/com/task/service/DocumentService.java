@@ -30,15 +30,29 @@ public class DocumentService {
     private final DocumentAttributeRepository documentAttributeRepository;
     private final DocumentMapper documentMapper;
 
-    public void createDocument(DocumentDto request) {
-        documentRepository.save(documentMapper.toEntity(request));
+    public void createDocument(DocumentDto request, User user) {
+        Document document = documentMapper.toEntity(request);
+        document.setVersion(1);
+        document.getOwners().add(user);
+        if (document.getAttributes() != null) {
+            for (DocumentAttribute attribute : document.getAttributes()) {
+                attribute.setDocument(document);
+            }
+        }
+        Document savedDocument = documentRepository.save(document);
+
+        savedDocument.setOriginalId(savedDocument.getId());
+        documentRepository.save(savedDocument);
     }
 
-    public DocumentDto updateDocument(DocumentDto request) {
+
+    public void updateDocument(DocumentDto request) {
         Document documentToSave = documentMapper.toEntity(request);
         documentToSave.setVersion(request.getVersion()+1);
-        Document saved = documentRepository.save(documentToSave);
-        return DocumentMapper.INSTANCE.toDto(saved);
+        documentToSave.setOriginalId(request.getId());
+        documentToSave.setId(null);
+
+        documentRepository.save(documentToSave);
     }
 
     public DocumentDto updateDocumentAttributes(Long documentId, List<AttributeDto> attributesDto) {

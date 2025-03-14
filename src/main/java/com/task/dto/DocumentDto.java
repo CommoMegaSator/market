@@ -1,5 +1,6 @@
 package com.task.dto;
 
+import com.task.enumeration.Status;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -23,15 +24,13 @@ public class DocumentDto {
 
     private String description;
 
+    private int version;
+
     private List<UserDto> owners;
 
     private String url;
 
-    private int version;
-
-    private String status;
-
-    private LocalDateTime createdAt;
+    private Status status;
     
     private List<AttributeDto> attributes;
 }

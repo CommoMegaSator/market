@@ -2,6 +2,7 @@ package com.task.controller;
 
 import com.task.dto.AttributeDto;
 import com.task.dto.DocumentDto;
+import com.task.entity.User;
 import com.task.enumeration.Status;
 import com.task.exception.ServiceException;
 import com.task.service.DocumentService;
@@ -16,6 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,29 +44,30 @@ public class DocumentController {
     @Value("${bucket.document.name:task}")
     private String bucketName;
 
-    @Value("${bucket.document.folder:task}")
-    private String folder;
+    @Value("${bucket.document.folder:document}")
+    private String folderName;
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add document", description = "Creates document metadata and saves document")
     public void createDocumentMetadata(@Valid @RequestPart("metadata") DocumentDto request,
-                                       @RequestPart("document") MultipartFile document) {
+                                       @RequestPart("document") MultipartFile document,
+                                       @AuthenticationPrincipal User user) {
         try {
-            String folderName = "document";
             String fileUrl = storageService.uploadFileToBucket(document, bucketName, folderName);
             request.setUrl(fileUrl);
 
-            documentService.createDocument(request);
+            documentService.createDocument(request, user);
         } catch (Exception e) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update document", description = "Updates document metadata")
-    public ResponseEntity<DocumentDto> updateDocument(@Valid @RequestBody DocumentDto request) {
-        return ResponseEntity.ok(documentService.updateDocument(request));
+    public void updateDocument(@Valid @RequestBody DocumentDto request) {
+        documentService.updateDocument(request);
     }
 
     @GetMapping("/versions")

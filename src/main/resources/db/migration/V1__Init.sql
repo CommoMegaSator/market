@@ -8,9 +8,10 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS document (
     id SERIAL PRIMARY KEY,
+    original_id BIGINT,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    owner VARCHAR(255) NOT NULL,
+    owner_id INT NULL REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT now(),
     version INT NOT NULL,
     status VARCHAR(20) CHECK (status IN ('ACTIVE', 'INACTIVE'))
@@ -18,7 +19,7 @@ CREATE TABLE IF NOT EXISTS document (
 
 CREATE TABLE IF NOT EXISTS document_attributes (
     id SERIAL PRIMARY KEY,
-    document_id SERIAL REFERENCES document(id) ON DELETE CASCADE,
+    document_id INT REFERENCES document(id) ON DELETE CASCADE,
     attribute_key VARCHAR(255) NOT NULL,
     attribute_value TEXT NOT NULL
 );

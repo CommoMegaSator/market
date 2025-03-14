@@ -36,6 +36,9 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "original_id")
+    private Long originalId;
+
     @NotBlank
     @Size(max = 255)
     private String title;
