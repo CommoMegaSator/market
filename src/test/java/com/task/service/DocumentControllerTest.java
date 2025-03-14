@@ -74,7 +74,7 @@ class DocumentControllerTest {
         user.setUsername("alice");
         user.setEmail("alice@example.com");
         user.setPassword("securepass");
-        user.setRole(Role.USER);
+        user.setRole(Role.ADMIN);
         user = userRepository.save(user);
 
         DocumentDto documentDto = new DocumentDto();

@@ -17,6 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,6 +50,7 @@ public class DocumentController {
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Add document", description = "Creates document metadata and saves document")
     public void createDocumentMetadata(@Valid @RequestPart("metadata") DocumentDto request,
                                        @RequestPart("document") MultipartFile document,
@@ -65,6 +67,7 @@ public class DocumentController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update document", description = "Updates document metadata")
     public void updateDocument(@Valid @RequestBody DocumentDto request) {
         documentService.updateDocument(request);
@@ -89,6 +92,7 @@ public class DocumentController {
     }
 
     @PutMapping("/{versionId}/attributes")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update attributes", description = "Updates specific attributes")
     public ResponseEntity<DocumentDto> updateAttributes(
             @PathVariable Long versionId,
